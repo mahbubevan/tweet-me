@@ -1,1 +1,3 @@
-{{ query_set }}
+{% for q in object_list %}
+<li> {{q.content}} ---- {{q.timestamp|timesince}} ago </li>
+{% endfor %}
