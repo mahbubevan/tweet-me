@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #own app
     'tweets.apps.TweetsConfig',
+    'accounts.apps.AccountsConfig',
     #django crispy forms
     'crispy_forms',
     #django-rest-framework
