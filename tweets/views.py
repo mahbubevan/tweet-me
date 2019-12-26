@@ -16,7 +16,6 @@ from django.urls import reverse_lazy
 class TweetCreateView(LoginRequiredMixin,FormUserNeededMixin,CreateView):
     form_class = TweetModelForm
     template_name = 'tweets/create_view.html'
-    success_url = "/tweet/"
     login_url = '/admin/'
 
 
@@ -35,7 +34,7 @@ class TweetUpdateView(LoginRequiredMixin,UserOwnerMixin,UpdateView):
     queryset = Tweet.objects.all()
     form_class = TweetModelForm
     template_name = "tweets/update_view.html"
-    success_url = "/tweet/"
+    # success_url = "/tweet/"
     login_url = "/admin/"
 
 
@@ -43,7 +42,7 @@ class TweetUpdateView(LoginRequiredMixin,UserOwnerMixin,UpdateView):
 class TweetDeleteView(LoginRequiredMixin,DeleteView):
     template_name = "tweets/delete_confirm.html"
     model = Tweet
-    success_url = reverse_lazy("home")
+    success_url = reverse_lazy("tweet:list")
 
 
 
