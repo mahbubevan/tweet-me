@@ -11,6 +11,7 @@ from .forms import TweetModelForm
 from .mixins import FormUserNeededMixin, UserOwnerMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.db.models import Q
 
 # Create your views here.
 class TweetCreateView(LoginRequiredMixin,FormUserNeededMixin,CreateView):
@@ -27,7 +28,21 @@ class TweetDetailView(DetailView):
 
 class TweetListView(ListView):
     template_name = 'tweets/list_view.html'
-    queryset = Tweet.objects.all()
+
+    def get_queryset(self,*args,**kwargs):
+        qs = Tweet.objects.all()
+        print(self.request.GET)
+        query = self.request.GET.get("q",None)
+        if query is not None:
+            qs = qs.filter(
+                    Q(content__icontains=query) |
+                    Q(user__username__icontains=query)
+                )
+        return qs
+
+    def get_context_data(self,*args,**kwargs):
+        context = super(TweetListView,self).get_context_data(*args,**kwargs)
+        return context
 
 # Update View
 class TweetUpdateView(LoginRequiredMixin,UserOwnerMixin,UpdateView):
