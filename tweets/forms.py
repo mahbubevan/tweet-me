@@ -2,6 +2,14 @@ from django import forms
 from .models import Tweet
 
 class TweetModelForm(forms.ModelForm):
+    content = forms.CharField(label="",widget=forms.Textarea(
+        attrs = {
+            'placeholder':'Your Message',
+            'rows':'5',
+            'class':'form-control',
+            'autofocus':1,
+        }
+    ))
     class Meta:
         model = Tweet
         fields  = [

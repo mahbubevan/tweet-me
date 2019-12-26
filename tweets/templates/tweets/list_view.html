@@ -3,9 +3,18 @@
 {% block content %}
 
   <div class="row">
-    <div class="col-sm-8 col-sm-offset-2">
-      {% include "tweets/search_form.html" %} <br>
+    <div class="col-sm-3 col-xs-12" style="background-color:yellow">
+      <h1>{{request.user}}</h1>
+    </div>
+    <div class="col-sm-9">
+        <div class="" style="width:50%">
+          {% if not request.GET.q %}
+                  {% include 'tweets/form.html' with form=create_form action_url=create_url btn_title='Tweet' btn_class='btn btn-md btn-info'%}
+          {% endif %}
+        </div>
+      <div class="">
 
+      </div><br><br><hr>
       {% for object in object_list %}
         <div class="media">
           <div class="media-left">
