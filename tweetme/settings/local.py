@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'tweets.apps.TweetsConfig',
     #django crispy forms
     'crispy_forms',
+    #django-rest-framework
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
