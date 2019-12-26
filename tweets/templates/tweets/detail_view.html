@@ -1,1 +1,11 @@
-{{ tweet }}
+{% extends "base.html" %}
+
+{% block content %}
+
+    <p>
+      {{ object.content }}<br>
+      {{ object.user }} <br>
+      {{ object.timestamp|timesince }} ago
+    </p>
+
+{% endblock %}
