@@ -5,6 +5,7 @@ from .validators import validate_content
 from django.urls import reverse
 # Create your models here.
 
+# model manager
 
 
 class Tweet(models.Model):
@@ -18,6 +19,10 @@ class Tweet(models.Model):
 
     def get_absolute_url(self):
         return reverse("tweet:detail",kwargs={"pk":self.pk})
+
+
+    # class Meta:
+    #     ordering = ['-timestamp','content']
 
     # def clean(self,*args,**kwargs):
     #     content = self.content

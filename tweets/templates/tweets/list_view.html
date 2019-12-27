@@ -21,39 +21,98 @@
       var query = getParameterByName('q')
       var tweetList = []
 
+      function attachTweet(tweetValue,prepend){
+        var tweetContent = tweetValue.content
+        var tweetUser = tweetValue.user
+        var dateDisplay = tweetValue.date_display
+        var htmlFormat = "<div class='media'> <div class='media-body'> <p> "+ tweetContent +"<br> via "+ tweetUser.username +" | "+ dateDisplay +" | <a href='#'>View</a> </p></div> </div><hr>"
+        if(prepend==true){
+          $("#tweet-container").prepend(htmlFormat)
+        }else{
+          $("#tweet-container").append(htmlFormat)
+        }
+      }
+
       function parseTweets(){
         if(tweetList == 0){
           $("#tweet-container").text("No Tweets Found")
         }else{
           $.each(tweetList,function(key,value){
-            var tweetContent = value.content
-            var tweetUser = value.user
-            var tweetKey = key
-            $("#tweet-container").append(
-                  "<div class='media'> <div class='media-body'> <p> "+ tweetContent +"<br> via "+ tweetUser.username +" | <a href='#'>View</a> </p></div> </div><hr>"
-            )
+              var tweetKey = key
+              attachTweet(value)
+          })
+        }
+      }
+
+        function fetchTweets(){
+          console.log("fetching...")
+          $.ajax({
+            url:'/api/tweet/',
+            method:'GET',
+            data:{
+              'q':query
+            },
+            success:function(data){
+              tweetList = data
+              parseTweets()
+            },
+            error:function(error){
+              console.log(error,'error')
+            }
           })
         }
 
-      }
+        fetchTweets()
+
+      var totalChar = 140
+      var charLeft = 0
 
 
-      $.ajax({
-        url:'/api/tweet/',
-        method:'GET',
-        data:{
-          'q':query
-        },
-        success:function(data){
-          tweetList = data
-          parseTweets()
-        },
-        error:function(error){
-          console.log(error,'error')
+      var countCharSpan = "<span class='text-info' id='tweetCharsLeft' >"+ totalChar +"</span>"
+      $("#tweet-form").append(countCharSpan)
+      var spanChars = $("#tweetCharsLeft")
+      $("#tweet-form textarea").keyup(function(event){
+        var textLength = $(this).val().length
+        var spanChars = $("#tweetCharsLeft")
+        charLeft = totalChar - textLength
+        spanChars.text(charLeft)
+
+        if(charLeft < 0){
+          spanChars.removeClass("text-info")
+          spanChars.addClass("text-danger")
+        }else{
+            spanChars.removeClass("text-danger")
+            spanChars.removeClass("text-info")
+            spanChars.addClass("text-success")
         }
+
       })
 
+      $("#tweet-form").submit(function(event){
+        event.preventDefault()
+        var this_ = $(this)
+        var formData = this_.serialize()
+        console.log(this_)
+        if(charLeft<0){
+          spanChars.addClass("text-danger")
+          spanChars.text("Can't Tweet Too Long !!! ")
+        }else{
+          $.ajax({
+            url:'/api/tweet/create/',
+            method:'POST',
+            data:formData,
+            success:function(data){
+              this_.find("input[type=text],textarea").val("")
+              attachTweet(data,true)
+            },
+            error:function(error){
+              console.log(error,'error')
+            }
+          })
+        }
 
+
+      })
 
 
 
@@ -74,7 +133,7 @@
     <div class="col-sm-9">
         <div class="" style="width:50%">
           {% if not request.GET.q %}
-                  {% include 'tweets/form.html' with form=create_form action_url=create_url btn_title='Tweet' btn_class='btn btn-md btn-info'%}
+                  {% include 'tweets/form.html' with form=create_form action_url=create_url btn_title='Tweet' btn_class='btn btn-md btn-info' form_id='tweet-form' %}
           {% endif %}
         </div>
       <div class="">
